@@ -44,8 +44,8 @@ namespace Nerven.Immutabler.Runners.Cli
             {
                 var _immutabler = new ImmutablerMachine();
 
-                var _succeeded = await _immutabler.PatchMsbuildSolutionAsync(solutionFile);
-                return _succeeded ? 0 : 1;
+                await _immutabler.PatchMsbuildSolutionAsync(solutionFile);
+                return 0;
             }
         }
 
@@ -67,8 +67,8 @@ namespace Nerven.Immutabler.Runners.Cli
             {
                 var _immutabler = new ImmutablerMachine();
 
-                var _succeeded = await _immutabler.PatchMsbuildProjectAsync(projectFile);
-                return _succeeded ? 0 : 1;
+                await _immutabler.PatchMsbuildProjectAsync(projectFile);
+                return 0;
             }
         }
 
