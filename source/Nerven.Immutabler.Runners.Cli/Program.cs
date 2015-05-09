@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -16,10 +17,14 @@ namespace Nerven.Immutabler.Runners.Cli
             {
                 new _PatchMsbuildSolutionConsoleCommand(),
                 new _PatchMsbuildProjectConsoleCommand(),
+                new _SaveCommandConsoleCommand(),
+                new _ExecuteSavedCommandConsoleCommand(),
                 new _InteractiveModeConsoleCommand(),
             };
 
         public static int Main() => ConsoleCommandDispatcher.DispatchCommand(Commands, CommandLineParser.Parse(Environment.CommandLine).Skip(1).ToArray(), Console.Out);
+
+        private static string _GetSavedCommandFilePath() => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), typeof(Program).Namespace + ".saved-command.txt");
 
         private sealed class _PatchMsbuildSolutionConsoleCommand : ConsoleCommand
         {
@@ -64,6 +69,37 @@ namespace Nerven.Immutabler.Runners.Cli
 
                 var _succeeded = await _immutabler.PatchMsbuildProjectAsync(projectFile);
                 return _succeeded ? 0 : 1;
+            }
+        }
+
+        private sealed class _SaveCommandConsoleCommand : ConsoleCommand
+        {
+            public _SaveCommandConsoleCommand()
+            {
+                IsCommand("save");
+                HasAdditionalArguments(1);
+            }
+
+            public override int Run(string[] remainingArguments)
+            {
+                var _command = remainingArguments[0];
+
+                File.WriteAllText(_GetSavedCommandFilePath(), _command);
+                return 0;
+            }
+        }
+
+        private sealed class _ExecuteSavedCommandConsoleCommand : ConsoleCommand
+        {
+            public _ExecuteSavedCommandConsoleCommand()
+            {
+                IsCommand("rerun");
+            }
+
+            public override int Run(string[] remainingArguments)
+            {
+                var _command = File.ReadAllText(_GetSavedCommandFilePath());
+                return ConsoleCommandDispatcher.DispatchCommand(Commands, CommandLineParser.Parse(_command), Console.Out);
             }
         }
 
