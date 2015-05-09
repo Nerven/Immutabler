@@ -6,23 +6,19 @@ using Nerven.Assertion;
 
 namespace Nerven.Immutabler
 {
+    /// <Immutabler />
     [PublicAPI]
     public sealed partial class TypeDefinition
     {
-#if DEBUG
-        public interface IImmutable
-        {
-            string Name { get; }
+        public string Name { get; }
 
-            string Namespace { get; }
+        public string Namespace { get; }
 
-            ImmutableList<UsingDirectiveSyntax> Usings { get; }
+        public ImmutableList<UsingDirectiveSyntax> Usings { get; }
 
-            ImmutableList<PropertyDefinition> Properties { get; }
+        public ImmutableList<PropertyDefinition> Properties { get; }
 
-            NameSyntax ValidateMethodName { get; }
-        }
-#endif
+        public NameSyntax ValidateMethodName { get; }
 
         public static ImmutableList<UsingDirectiveSyntax> DefaultUsings => ImmutableList.Create<UsingDirectiveSyntax>();
 
@@ -40,21 +36,21 @@ namespace Nerven.Immutabler
         {
             Must.Assert(usings != null);
 
-            return WithUsings(_Usings.AddRange(usings));
+            return WithUsings(Usings.AddRange(usings));
         }
 
         public TypeDefinition AddProperties(IEnumerable<PropertyDefinition> properties)
         {
             Must.Assert(properties != null);
 
-            return WithProperties(_Properties.AddRange(properties));
+            return WithProperties(Properties.AddRange(properties));
         }
 
         public TypeDefinition AddProperties(params PropertyDefinition[] properties)
         {
             Must.Assert(properties != null);
 
-            return WithProperties(_Properties.AddRange(properties));
+            return WithProperties(Properties.AddRange(properties));
         }
     }
 }

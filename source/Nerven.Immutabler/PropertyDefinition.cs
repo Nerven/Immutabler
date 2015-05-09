@@ -3,21 +3,17 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Nerven.Immutabler
 {
+    /// <Immutabler />
     [PublicAPI]
     public sealed partial class PropertyDefinition
     {
-#if DEBUG
-        public interface IImmutable
-        {
-            string Name { get; }
+        public string Name { get; }
 
-            string Type { get; }
+        public string Type { get; }
 
-            NameSyntax DefaultValuePropertyName { get; }
+        public NameSyntax DefaultValuePropertyName { get; }
 
-            NameSyntax ValidateMethodName { get; }
-        }
-#endif
+        public NameSyntax ValidateMethodName { get; }
 
         public static NameSyntax DefaultDefaultValuePropertyName => null;
 

@@ -36,29 +36,12 @@ namespace Nerven.Immutabler.Machine
             return SyntaxFactory
                 .ClassDeclaration(typeDefinition.Name)
                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword))
-                .AddMembers(_CreateOutputClassFields(typeDefinition))
                 .AddMembers(_CreateOutputClassMainCtor(typeDefinition))
-                .AddMembers(_CreateOutputClassProperties(typeDefinition))
                 .AddMembers(_CreateOutputClassCreateMethod(typeDefinition))
                 .AddMembers(_CreateOutputClassCreateWithMethods(typeDefinition))
                 .AddMembers(_CreateOutputClassWithMethods(typeDefinition));
         }
-
-        private MemberDeclarationSyntax[] _CreateOutputClassFields(TypeDefinition typeDefinition)
-        {
-            return typeDefinition.Properties.Select(_CreateOutputClassField).ToArray<MemberDeclarationSyntax>();
-        }
-
-        private FieldDeclarationSyntax _CreateOutputClassField(PropertyDefinition property)
-        {
-            return SyntaxFactory
-                .FieldDeclaration(SyntaxFactory
-                    .VariableDeclaration(
-                        SyntaxFactory.IdentifierName(property.Type),
-                        SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(NameHelper.TextToPrivateFieldIdentifier(property.Name)))))
-                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword));
-        }
-
+        
         private ConstructorDeclarationSyntax _CreateOutputClassMainCtor(TypeDefinition typeDefinition)
         {
             return SyntaxFactory
@@ -74,26 +57,10 @@ namespace Nerven.Immutabler.Machine
                             .ExpressionStatement(SyntaxFactory
                                 .AssignmentExpression(
                                     SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.IdentifierName(NameHelper.TextToPrivateFieldIdentifier(_property.Name)),
+                                    SyntaxFactory.IdentifierName(NameHelper.TextToPublicPropertyIdentifier(_property.Name)),
                                     SyntaxFactory.IdentifierName(NameHelper.TextToMethodParameterIdentifier(_property.Name)))))));
         }
-
-        private MemberDeclarationSyntax[] _CreateOutputClassProperties(TypeDefinition typeDefinition)
-        {
-            return typeDefinition.Properties.Select(_CreateOutputClassProperty).ToArray<MemberDeclarationSyntax>();
-        }
-
-        private PropertyDeclarationSyntax _CreateOutputClassProperty(PropertyDefinition property)
-        {
-            return SyntaxFactory
-                .PropertyDeclaration(
-                    SyntaxFactory.IdentifierName(property.Type),
-                    NameHelper.TextToPublicPropertyIdentifier(property.Name))
-                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                .AddAccessorListAccessors(SyntaxFactory
-                    .AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, SyntaxFactory.Block(SyntaxFactory.ReturnStatement(NameHelper.TextToPrivateFieldName(property.Name)))));
-        }
-
+        
         private MethodDeclarationSyntax _CreateOutputClassCreateMethod(TypeDefinition typeDefinition)
         {
             var _propertyValidationStatements = _CreatePropertyValidationStatements(typeDefinition, _property => NameHelper.TextToMethodParameterName(_property.Name));
@@ -193,7 +160,7 @@ namespace Nerven.Immutabler.Machine
             var _validationStatement = _CreatePropertyValidationStatement(propertyDefinition, _property => NameHelper.TextToMethodParameterName(_property.Name));
             var _typeCtorArguments = _CreatePropertyArgumentList(
                 typeDefinition,
-                _property => (_property.Name == propertyDefinition.Name ? NameHelper.TextToMethodParameterName(propertyDefinition.Name) : NameHelper.TextToPrivateFieldName(_property.Name)));
+                _property => (_property.Name == propertyDefinition.Name ? NameHelper.TextToMethodParameterName(propertyDefinition.Name) : NameHelper.TextToPublicPropertyName(_property.Name)));
             var _createTypeInstanceStatement = _CreateDeclareVariableAndCreateTypeInstanceStatement(typeDefinition, _typeCtorArguments, SyntaxFactory.Identifier("_instance"));
             var _typeValidationStatement = _CreateTypeValidationStatement(typeDefinition, SyntaxFactory.IdentifierName("_instance"));
             var _returnTypeInstanceStatement = SyntaxFactory.ReturnStatement(SyntaxFactory.IdentifierName("_instance"));

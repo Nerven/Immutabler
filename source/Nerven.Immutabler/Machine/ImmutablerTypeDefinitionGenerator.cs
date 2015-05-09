@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Nerven.Assertion;
@@ -20,37 +24,39 @@ namespace Nerven.Immutabler.Machine
                 .ChildNodes()
                 .Where(_syntaxNode => _syntaxNode is CSharpSyntaxNode)
                 .OfType<ClassDeclarationSyntax>()
+                .Where(_classDeclaration => _classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                .Where(_classDeclaration => _classDeclaration.HasLeadingTrivia)
                 .OneOrDefault();
 
-            var _definitionInterface = _inputClassDeclaration == null ? null : _GetNestedInterfaceDeclarations(_inputClassDeclaration)
-                .Where(_interface => _interface.Identifier.Text == "IImmutable")
+            var _immutablerDocumentationXml = _inputClassDeclaration?
+                .GetLeadingTrivia()
+                .Where(_trivia => _trivia.Kind() == SyntaxKind.SingleLineDocumentationCommentTrivia)
+                .Select(_trivia => _trivia.GetStructure().ToString())
+                .Select(_ParseDocumentationCommentXml)
+                .Where(_xml => string.Equals(_xml?.Name.LocalName, "Immutabler", StringComparison.Ordinal))
                 .OneOrDefault();
-
-            if (_definitionInterface == null)
+            
+            if (_immutablerDocumentationXml == null)
             {
                 return null;
             }
 
-            return _CreateTypeDefinition(_inputClassDeclaration, rootNode, _definitionInterface);
+            return _CreateTypeDefinition(_inputClassDeclaration, rootNode);
         }
-        
-        private IEnumerable<InterfaceDeclarationSyntax> _GetNestedInterfaceDeclarations(ClassDeclarationSyntax type)
-        {
-            var _stack = new Stack<MemberDeclarationSyntax>(type.Members);
 
-            while (_stack.Count != 0)
+        private static XElement _ParseDocumentationCommentXml(string content)
+        {
+            try
             {
-                var _member = _stack.Pop();
-                switch (_member.Kind())
-                {
-                    case SyntaxKind.InterfaceDeclaration:
-                        yield return (InterfaceDeclarationSyntax)_member;
-                        break;
-                }
+                return XElement.Parse(content);
+            }
+            catch (XmlException)
+            {
+                return null;
             }
         }
-
-        private TypeDefinition _CreateTypeDefinition(ClassDeclarationSyntax inputClassDeclaration, CompilationUnitSyntax rootNode, InterfaceDeclarationSyntax definitionInterface)
+        
+        private TypeDefinition _CreateTypeDefinition(ClassDeclarationSyntax inputClassDeclaration, CompilationUnitSyntax rootNode)
         {
             var _typeDefinition = TypeDefinition.Create(
                 inputClassDeclaration.Identifier.ToString(),
@@ -75,16 +81,16 @@ namespace Nerven.Immutabler.Machine
                     .WithValidateMethodName(SyntaxFactory.IdentifierName(_typeValidationMethod.Identifier));
             }
 
-            _typeDefinition = _typeDefinition.AddProperties(_CreatePropertyDefinitions(definitionInterface, inputClassDeclaration));
+            _typeDefinition = _typeDefinition.AddProperties(_CreatePropertyDefinitions(inputClassDeclaration));
             return _typeDefinition;
         }
 
-        private IEnumerable<PropertyDefinition> _CreatePropertyDefinitions(InterfaceDeclarationSyntax definitionInterface, ClassDeclarationSyntax inputClassDeclaration)
+        private IEnumerable<PropertyDefinition> _CreatePropertyDefinitions(ClassDeclarationSyntax inputClassDeclaration)
         {
-            return definitionInterface.Members
+            return inputClassDeclaration.Members
                 .Where(_member => _member.Kind() == SyntaxKind.PropertyDeclaration)
                 .Cast<PropertyDeclarationSyntax>()
-                .Where(_property => _property.AccessorList.Accessors.Count == 1)
+                .Where(_property => _property.AccessorList?.Accessors.Count == 1)
                 .Where(_property => _property.AccessorList.Accessors.All(_accessor => _accessor.Body == null && _accessor.Keyword.Kind() == SyntaxKind.GetKeyword))
                 .Select(_property => _CreatePropertyDefinition(_property, inputClassDeclaration));
         }

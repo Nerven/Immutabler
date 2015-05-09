@@ -8,58 +8,13 @@ namespace Nerven.Immutabler
 {
     partial class TypeDefinition
     {
-        private readonly string _Name;
-        private readonly string _Namespace;
-        private readonly ImmutableList<UsingDirectiveSyntax> _Usings;
-        private readonly ImmutableList<PropertyDefinition> _Properties;
-        private readonly NameSyntax _ValidateMethodName;
         private TypeDefinition(string @name, string @namespace, ImmutableList<UsingDirectiveSyntax> @usings, ImmutableList<PropertyDefinition> @properties, NameSyntax @validateMethodName)
         {
-            _Name = @name;
-            _Namespace = @namespace;
-            _Usings = @usings;
-            _Properties = @properties;
-            _ValidateMethodName = @validateMethodName;
-        }
-
-        public string Name
-        {
-            get
-            {
-                return _Name;
-            }
-        }
-
-        public string Namespace
-        {
-            get
-            {
-                return _Namespace;
-            }
-        }
-
-        public ImmutableList<UsingDirectiveSyntax> Usings
-        {
-            get
-            {
-                return _Usings;
-            }
-        }
-
-        public ImmutableList<PropertyDefinition> Properties
-        {
-            get
-            {
-                return _Properties;
-            }
-        }
-
-        public NameSyntax ValidateMethodName
-        {
-            get
-            {
-                return _ValidateMethodName;
-            }
+            Name = @name;
+            Namespace = @namespace;
+            Usings = @usings;
+            Properties = @properties;
+            ValidateMethodName = @validateMethodName;
         }
 
         public static TypeDefinition Create(string @name, string @namespace)
@@ -78,7 +33,7 @@ namespace Nerven.Immutabler
         {
             if (!IsNameValid(@name))
                 throw new System.ArgumentException();
-            var _instance = new TypeDefinition(@name, _Namespace, _Usings, _Properties, _ValidateMethodName);
+            var _instance = new TypeDefinition(@name, Namespace, Usings, Properties, ValidateMethodName);
             if (!IsValid(_instance))
                 throw new System.ArgumentException();
             return _instance;
@@ -88,7 +43,7 @@ namespace Nerven.Immutabler
         {
             if (!IsNamespaceValid(@namespace))
                 throw new System.ArgumentException();
-            var _instance = new TypeDefinition(_Name, @namespace, _Usings, _Properties, _ValidateMethodName);
+            var _instance = new TypeDefinition(Name, @namespace, Usings, Properties, ValidateMethodName);
             if (!IsValid(_instance))
                 throw new System.ArgumentException();
             return _instance;
@@ -96,7 +51,7 @@ namespace Nerven.Immutabler
 
         public TypeDefinition WithUsings(ImmutableList<UsingDirectiveSyntax> @usings)
         {
-            var _instance = new TypeDefinition(_Name, _Namespace, @usings, _Properties, _ValidateMethodName);
+            var _instance = new TypeDefinition(Name, Namespace, @usings, Properties, ValidateMethodName);
             if (!IsValid(_instance))
                 throw new System.ArgumentException();
             return _instance;
@@ -104,7 +59,7 @@ namespace Nerven.Immutabler
 
         public TypeDefinition WithProperties(ImmutableList<PropertyDefinition> @properties)
         {
-            var _instance = new TypeDefinition(_Name, _Namespace, _Usings, @properties, _ValidateMethodName);
+            var _instance = new TypeDefinition(Name, Namespace, Usings, @properties, ValidateMethodName);
             if (!IsValid(_instance))
                 throw new System.ArgumentException();
             return _instance;
@@ -112,7 +67,7 @@ namespace Nerven.Immutabler
 
         public TypeDefinition WithValidateMethodName(NameSyntax @validateMethodName)
         {
-            var _instance = new TypeDefinition(_Name, _Namespace, _Usings, _Properties, @validateMethodName);
+            var _instance = new TypeDefinition(Name, Namespace, Usings, Properties, @validateMethodName);
             if (!IsValid(_instance))
                 throw new System.ArgumentException();
             return _instance;

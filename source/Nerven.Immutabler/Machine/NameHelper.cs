@@ -12,15 +12,15 @@ namespace Nerven.Immutabler.Machine
 
         public static SyntaxToken TextToPublicPropertyIdentifier(string s) => SyntaxFactory.Identifier(s);
 
-        ////public static IdentifierNameSyntax TextToPublicPropertyName(string s) => SyntaxFactory.IdentifierName(s);
+        public static IdentifierNameSyntax TextToPublicPropertyName(string s) => SyntaxFactory.IdentifierName(s);
 
         ////public static SyntaxToken TextToProtectedMethodIdentifier(string s) => SyntaxFactory.Identifier(s);
 
         ////public static IdentifierNameSyntax TextToProtectedMethodName(string s) => SyntaxFactory.IdentifierName(s);
 
-        public static SyntaxToken TextToPrivateFieldIdentifier(string s) => SyntaxFactory.Identifier("_" + s);
+        ////public static SyntaxToken TextToPrivateFieldIdentifier(string s) => SyntaxFactory.Identifier("_" + s);
 
-        public static IdentifierNameSyntax TextToPrivateFieldName(string s) => SyntaxFactory.IdentifierName("_" + s);
+        ////public static IdentifierNameSyntax TextToPrivateFieldName(string s) => SyntaxFactory.IdentifierName("_" + s);
 
         public static SyntaxToken TextToMethodParameterIdentifier(string s) => SyntaxFactory.Identifier("@" + s.Substring(0, 1).ToLower() + s.Substring(1));
 
