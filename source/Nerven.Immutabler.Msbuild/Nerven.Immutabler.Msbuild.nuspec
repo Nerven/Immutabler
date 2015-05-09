@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Nerven.Immutabler.Msbuild</id>
+    <title>Nerven.Immutabler.Msbuild</title>
+    <version>$version$</version>
+    <authors>Nerven</authors>
+    <owners>Nerven</owners>
+    <projectUrl>https://nerven.se/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Nerven.Immutabler.Msbuild</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright © Victor Blomberg &lt;victor.blomberg@nerven.se&gt; and contributors.</copyright>
+    <tags></tags>
+    <developmentDependency>true</developmentDependency>
+  </metadata>
+  <files>
+    <file src="..\..\LICENSE.txt" target="lib\net452\" />
+    <file src="..\Nerven.Immutabler.Runners.Cli\bin\$configuration$\" target="build\net452\" />
+    <file src="Nerven.Immutabler.Msbuild.props" target="build\net452\" />
+  </files>
+</package>

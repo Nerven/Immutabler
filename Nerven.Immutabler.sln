@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{F3227FED-D98C-4F9F-8552-2307F8681051}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerven.Immutabler", "source\Nerven.Immutabler\Nerven.Immutabler.csproj", "{75C5EAE6-9178-4299-9CD6-870F9E95529F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BF116D82-FE66-40C5-A2B3-378E1F062C89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerven.Immutabler.Tests", "tests\Nerven.Immutabler.Tests\Nerven.Immutabler.Tests.csproj", "{E192A6F0-ADDE-4599-B93D-556E29A4EF57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerven.Immutabler.Runners.Cli", "source\Nerven.Immutabler.Runners.Cli\Nerven.Immutabler.Runners.Cli.csproj", "{E1869883-36D9-4254-A7E4-F914D5C371BC}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Nerven.Immutabler.Msbuild", "source\Nerven.Immutabler.Msbuild\Nerven.Immutabler.Msbuild.shproj", "{EC1830E0-0CB9-4A63-8ADD-F5761B8383B6}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		source\Nerven.Immutabler.Msbuild\Nerven.Immutabler.Msbuild.projitems*{ec1830e0-0cb9-4a63-8add-f5761b8383b6}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75C5EAE6-9178-4299-9CD6-870F9E95529F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75C5EAE6-9178-4299-9CD6-870F9E95529F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75C5EAE6-9178-4299-9CD6-870F9E95529F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75C5EAE6-9178-4299-9CD6-870F9E95529F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E192A6F0-ADDE-4599-B93D-556E29A4EF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E192A6F0-ADDE-4599-B93D-556E29A4EF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E192A6F0-ADDE-4599-B93D-556E29A4EF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E192A6F0-ADDE-4599-B93D-556E29A4EF57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1869883-36D9-4254-A7E4-F914D5C371BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1869883-36D9-4254-A7E4-F914D5C371BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1869883-36D9-4254-A7E4-F914D5C371BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1869883-36D9-4254-A7E4-F914D5C371BC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75C5EAE6-9178-4299-9CD6-870F9E95529F} = {F3227FED-D98C-4F9F-8552-2307F8681051}
+		{E192A6F0-ADDE-4599-B93D-556E29A4EF57} = {BF116D82-FE66-40C5-A2B3-378E1F062C89}
+		{E1869883-36D9-4254-A7E4-F914D5C371BC} = {F3227FED-D98C-4F9F-8552-2307F8681051}
+		{EC1830E0-0CB9-4A63-8ADD-F5761B8383B6} = {F3227FED-D98C-4F9F-8552-2307F8681051}
+	EndGlobalSection
+EndGlobal
