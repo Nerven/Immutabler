@@ -64,7 +64,7 @@ namespace Nerven.Immutabler.Machine
                             else
                             {
                                 var _existingGeneratedImmutablerSyntax = await _generatedImmutablerDocument.GetSyntaxRootAsync(cancellationToken);
-                                if (!_generatedImmutablerSyntax.IsEquivalentTo(_existingGeneratedImmutablerSyntax))
+                                if (!string.Equals(_generatedImmutablerSyntax.ToFullString(), _existingGeneratedImmutablerSyntax.ToFullString(), StringComparison.Ordinal))
                                 {
                                     _generatedImmutablerDocument = _generatedImmutablerDocument.WithSyntaxRoot(_generatedImmutablerSyntax);
                                     _project = _generatedImmutablerDocument.Project;
