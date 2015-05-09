@@ -115,7 +115,14 @@ namespace Nerven.Immutabler.Runners.Cli
                 var _exit = false;
                 while (!_exit)
                 {
-                    ConsoleCommandDispatcher.DispatchCommand(Commands.Append(new _ExitInteractiveModeConsoleCommand(() => _exit = true)), CommandLineParser.Parse(Console.ReadLine()), Console.Out);
+                    var _command = Console.ReadLine();
+
+                    if (string.IsNullOrEmpty(_command))
+                    {
+                        break;
+                    }
+
+                    ConsoleCommandDispatcher.DispatchCommand(Commands.Append(new _ExitInteractiveModeConsoleCommand(() => _exit = true)), CommandLineParser.Parse(_command), Console.Out);
                 }
 
                 return 0;
