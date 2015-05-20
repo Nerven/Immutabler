@@ -68,6 +68,7 @@ namespace Nerven.Immutabler.Machine
             var _typeValidationMethod = inputClassDeclaration.Members
                 .Where(_member => _member.Kind() == SyntaxKind.MethodDeclaration)
                 .Cast<MethodDeclarationSyntax>()
+                .Where(_method => _method.Modifiers.Any(SyntaxKind.StaticKeyword))
                 .Where(_method => _method.ParameterList.Parameters.Count == 1)
                 .SingleOrDefault(_method => _method.Identifier.Text == NameHelper.TextToPublicMethodIdentifier("IsValid").Text);
 
@@ -102,6 +103,7 @@ namespace Nerven.Immutabler.Machine
             var _propertyValidationMethod = inputClassDeclaration.Members
                 .Where(_member => _member.Kind() == SyntaxKind.MethodDeclaration)
                 .Cast<MethodDeclarationSyntax>()
+                .Where(_method => _method.Modifiers.Any(SyntaxKind.StaticKeyword))
                 .Where(_method => _method.ParameterList.Parameters.Count == 1)
                 .SingleOrDefault(_method => _method.Identifier.Text == NameHelper.TextToPublicMethodIdentifier("Is" + _propertyDefinition.Name + "Valid").Text);
 
@@ -118,6 +120,7 @@ namespace Nerven.Immutabler.Machine
             var _defaultProperty = inputClassDeclaration.Members
                 .Where(_member => _member.Kind() == SyntaxKind.PropertyDeclaration)
                 .Cast<PropertyDeclarationSyntax>()
+                .Where(_p => _p.Modifiers.Any(SyntaxKind.StaticKeyword))
                 .SingleOrDefault(_p => _p.Identifier.Text == NameHelper.TextToPublicPropertyIdentifier("Default" + _propertyDefinition.Name).Text);
 
             if (_defaultProperty != null)
