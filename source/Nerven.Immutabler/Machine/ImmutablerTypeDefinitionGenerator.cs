@@ -41,7 +41,7 @@ namespace Nerven.Immutabler.Machine
                 return null;
             }
 
-            return _CreateTypeDefinition(_inputClassDeclaration, rootNode);
+            return _CreateTypeDefinition(_inputClassDeclaration, rootNode, _immutablerDocumentationXml);
         }
 
         private static XElement _ParseDocumentationCommentXml(string content)
@@ -55,8 +55,8 @@ namespace Nerven.Immutabler.Machine
                 return null;
             }
         }
-        
-        private TypeDefinition _CreateTypeDefinition(ClassDeclarationSyntax inputClassDeclaration, CompilationUnitSyntax rootNode)
+
+        private TypeDefinition _CreateTypeDefinition(ClassDeclarationSyntax inputClassDeclaration, CompilationUnitSyntax rootNode, XElement immutablerDocumentationXml)
         {
             var _typeDefinition = TypeDefinition.Create(
                 inputClassDeclaration.Identifier.ToString(),
@@ -83,6 +83,14 @@ namespace Nerven.Immutabler.Machine
             }
 
             _typeDefinition = _typeDefinition.AddProperties(_CreatePropertyDefinitions(inputClassDeclaration));
+            
+            switch (immutablerDocumentationXml.Attribute(immutablerDocumentationXml.GetDefaultNamespace().GetName("serialization"))?.Value)
+            {
+                case "standard":
+                    _typeDefinition = _typeDefinition.WithSerializationMode(SerializationMode.Standard);
+                    break;
+            }
+
             return _typeDefinition;
         }
 

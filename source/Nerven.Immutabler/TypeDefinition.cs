@@ -20,11 +20,15 @@ namespace Nerven.Immutabler
 
         public NameSyntax ValidateMethodName { get; }
 
+        public SerializationMode SerializationMode { get; }
+
         public static ImmutableList<UsingDirectiveSyntax> DefaultUsings => ImmutableList.Create<UsingDirectiveSyntax>();
 
         public static ImmutableList<PropertyDefinition> DefaultProperties => ImmutableList.Create<PropertyDefinition>();
 
         public static NameSyntax DefaultValidateMethodName => null;
+
+        public static SerializationMode DefaultSerializationMode => SerializationMode.None;
 
         public static bool IsNameValid(string name) => name != null;
 
@@ -32,6 +36,8 @@ namespace Nerven.Immutabler
 
         public static bool IsValid(TypeDefinition typeDefinition) => true;
 
+        public static bool IsSerializationMode(SerializationMode serializationMode) => serializationMode == SerializationMode.None || serializationMode == SerializationMode.Standard;
+        
         public TypeDefinition AddUsings(IEnumerable<UsingDirectiveSyntax> usings)
         {
             Must.Assert(usings != null);

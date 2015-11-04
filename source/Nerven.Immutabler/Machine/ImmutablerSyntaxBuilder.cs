@@ -37,11 +37,13 @@ namespace Nerven.Immutabler.Machine
                 .ClassDeclaration(typeDefinition.Name)
                 .AddModifiers(SyntaxFactory.Token(SyntaxKind.PartialKeyword))
                 .AddMembers(_CreateOutputClassMainCtor(typeDefinition))
+                .AddMembers(_CreateOutputClassStandardSerializationCtor(typeDefinition))
                 .AddMembers(_CreateOutputClassCreateMethod(typeDefinition))
                 .AddMembers(_CreateOutputClassCreateWithMethods(typeDefinition))
-                .AddMembers(_CreateOutputClassWithMethods(typeDefinition));
+                .AddMembers(_CreateOutputClassWithMethods(typeDefinition))
+                .AddMembers(_CreateOutputClassStandardSerializationMethod(typeDefinition));
         }
-        
+
         private ConstructorDeclarationSyntax _CreateOutputClassMainCtor(TypeDefinition typeDefinition)
         {
             return SyntaxFactory
@@ -60,7 +62,43 @@ namespace Nerven.Immutabler.Machine
                                     SyntaxFactory.IdentifierName(NameHelper.TextToPublicPropertyIdentifier(_property.Name)),
                                     SyntaxFactory.IdentifierName(NameHelper.TextToMethodParameterIdentifier(_property.Name)))))));
         }
-        
+
+        // TODO: Add validation
+        private ExpressionStatementSyntax _CreateOutputClassStandardSerializationCtorPropertyAssignment(PropertyDefinition property)
+        {
+            var _getValueExpression = SyntaxFactory
+                .InvocationExpression(SyntaxFactory
+                    .MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName("info"), SyntaxFactory.IdentifierName("GetValue")))
+                .AddArgumentListArguments(
+                    SyntaxFactory.Argument(SyntaxFactory
+                        .InvocationExpression(SyntaxFactory.IdentifierName("nameof")) // TODO: Must be a better way?
+                        .AddArgumentListArguments(
+                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName(property.Name)))),
+                    SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(property.Type))));
+
+            return SyntaxFactory.ExpressionStatement(
+                SyntaxFactory.AssignmentExpression(
+                    SyntaxKind.SimpleAssignmentExpression,
+                    SyntaxFactory.IdentifierName(NameHelper.TextToPublicPropertyIdentifier(property.Name)),
+                    SyntaxFactory.CastExpression(SyntaxFactory.IdentifierName(property.Type), _getValueExpression)));
+        }
+
+        private MemberDeclarationSyntax[] _CreateOutputClassStandardSerializationCtor(TypeDefinition typeDefinition)
+        {
+            return typeDefinition.SerializationMode != SerializationMode.Standard ? new MemberDeclarationSyntax[0] : new MemberDeclarationSyntax[]
+                {
+                    SyntaxFactory
+                        .ConstructorDeclaration(SyntaxFactory.Identifier(typeDefinition.Name))
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
+                        .WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(new[]
+                            {
+                                SyntaxFactory.Parameter(SyntaxFactory.Identifier("info")).WithType(SyntaxFactory.IdentifierName("System.Runtime.Serialization.SerializationInfo")),
+                                SyntaxFactory.Parameter(SyntaxFactory.Identifier("context")).WithType(SyntaxFactory.IdentifierName("System.Runtime.Serialization.StreamingContext")),
+                            })))
+                        .WithBody(SyntaxFactory.Block(typeDefinition.Properties.Select(_CreateOutputClassStandardSerializationCtorPropertyAssignment))),
+                };
+        }
+
         private MethodDeclarationSyntax _CreateOutputClassCreateMethod(TypeDefinition typeDefinition)
         {
             var _propertyValidationStatements = _CreatePropertyValidationStatements(typeDefinition, _property => NameHelper.TextToMethodParameterName(_property.Name));
@@ -178,6 +216,38 @@ namespace Nerven.Immutabler.Machine
                     .AddStatements(_createTypeInstanceStatement)
                     .AddStatements(_typeValidationStatement)
                     .AddStatements(_returnTypeInstanceStatement));
+        }
+
+        // TODO: Add validation
+        private ExpressionStatementSyntax _CreateOutputClassStandardSerializationMethodPropertyExport(PropertyDefinition property)
+        {
+            return SyntaxFactory.ExpressionStatement(SyntaxFactory
+                .InvocationExpression(SyntaxFactory
+                    .MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.IdentifierName("info"), SyntaxFactory.IdentifierName("AddValue")))
+                .AddArgumentListArguments(
+                    SyntaxFactory.Argument(SyntaxFactory
+                        .InvocationExpression(SyntaxFactory.IdentifierName("nameof")) // TODO: Must be a better way?
+                        .AddArgumentListArguments(
+                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName(property.Name)))),
+                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName(property.Name))));
+        }
+
+        private MemberDeclarationSyntax[] _CreateOutputClassStandardSerializationMethod(TypeDefinition typeDefinition)
+        {
+            return typeDefinition.SerializationMode != SerializationMode.Standard ? new MemberDeclarationSyntax[0] : new MemberDeclarationSyntax[]
+                {
+                    SyntaxFactory
+                        .MethodDeclaration(
+                            SyntaxFactory.ParseName("void"), // TODO: Must be a better way?
+                            NameHelper.TextToPublicMethodIdentifier("GetObjectData"))
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                        .WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(new[]
+                            {
+                                SyntaxFactory.Parameter(SyntaxFactory.Identifier("info")).WithType(SyntaxFactory.IdentifierName("System.Runtime.Serialization.SerializationInfo")),
+                                SyntaxFactory.Parameter(SyntaxFactory.Identifier("context")).WithType(SyntaxFactory.IdentifierName("System.Runtime.Serialization.StreamingContext")),
+                            })))
+                        .WithBody(SyntaxFactory.Block(typeDefinition.Properties.Select(_CreateOutputClassStandardSerializationMethodPropertyExport))),
+                };
         }
 
         private StatementSyntax _CreateTypeValidationStatement(TypeDefinition type, ExpressionSyntax value)
